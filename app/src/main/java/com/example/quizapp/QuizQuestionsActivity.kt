@@ -5,9 +5,7 @@ import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 
 class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
@@ -23,6 +21,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var optionTwoTextView: TextView? = null
     private var optionThreeTextView: TextView? = null
     private var optionFourTextView: TextView? = null
+    private var submitButton: Button? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz_questions)
@@ -35,18 +34,23 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         optionTwoTextView = findViewById(R.id.option_two)
         optionThreeTextView = findViewById(R.id.option_three)
         optionFourTextView = findViewById(R.id.option_four)
+        submitButton = findViewById(R.id.submit_button)
         setQuestion()
 
         optionOneTextView!!.setOnClickListener(this)
         optionTwoTextView!!.setOnClickListener(this)
         optionThreeTextView!!.setOnClickListener(this)
         optionFourTextView!!.setOnClickListener(this)
+        submitButton!!.setOnClickListener(this)
     }
     private fun setQuestion(){
-        val mCurrentPosition = 1
         val question = mQuestionsList!![mCurrentPosition-1]
         defaultOptionsView()
-
+        if(mCurrentPosition==mQuestionsList!!.size){
+            submitButton!!.text = "FINISH"
+        }else{
+            submitButton!!.text = "SUBMIT"
+        }
         progressBar!!.progress = mCurrentPosition
         progressTextView!!.text = "$mCurrentPosition" + "/" + progressBar!!.max
         questionTextView!!.text = question!!.question
@@ -88,6 +92,33 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.option_four ->{
                 selectedOptionView(optionFourTextView!!,4)
             }
+            R.id.submit_button ->{
+                if(mSelectedOptionPosition==0) {
+                    mCurrentPosition++
+                    when {
+                        mCurrentPosition <= mQuestionsList!!.size ->{
+                            setQuestion()
+                        } else ->{
+                            Toast.makeText(this,
+                                    "You have successfully completed the Quiz",
+                                    Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }else{
+                    val question = mQuestionsList?.get(mCurrentPosition-1)
+                    if(question!!.correctAnswer!=mSelectedOptionPosition){
+                        answerView(mSelectedOptionPosition, R.drawable.wrong_option_border_bg)
+                    }
+                    answerView(question!!.correctAnswer,R.drawable.correct_option_border_bg)
+
+                    if(mCurrentPosition == mQuestionsList!!.size){
+                        submitButton!!.text="FINISH"
+                    }else{
+                        submitButton!!.text="NEXT QUESTION"
+                    }
+                    mSelectedOptionPosition = 0
+                }
+            }
         }
     }
 
@@ -100,6 +131,34 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 this,
                 R.drawable.selected_option_border_bg
         )
+    }
+    private fun answerView(answer:Int, drawableView:Int){
+        when(answer){
+            1->{
+                optionOneTextView!!.background = ContextCompat.getDrawable(
+                        this,
+                        drawableView
+                )
+            }
+            2->{
+                optionTwoTextView!!.background = ContextCompat.getDrawable(
+                        this,
+                        drawableView
+                )
+            }
+            3->{
+                optionThreeTextView!!.background = ContextCompat.getDrawable(
+                        this,
+                        drawableView
+                )
+            }
+            4->{
+                optionFourTextView!!.background = ContextCompat.getDrawable(
+                        this,
+                        drawableView
+                )
+            }
+        }
     }
 
 
