@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 
 @Suppress("DEPRECATION")
-abstract class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +25,7 @@ abstract class MainActivity : AppCompatActivity() {
             else{
                 val intent = Intent(this,QuizQuestionsActivity::class.java)
                 startActivity(intent)
-                finish()
+//                finish()
             }
         }
     }
